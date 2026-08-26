@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f766e">
+  <meta name="description" content="MACOKI Integrated Digital Ecosystem — Health, Education, Pharmacy, Laboratory, Learning, CBT and Administration.">
+  <title>MACOKI Integrated Digital Ecosystem</title>
+
+  <style>
+    :root{
+      --primary:#0f766e;
+      --primary-dark:#115e59;
+      --secondary:#2563eb;
+      --accent:#f59e0b;
+      --danger:#dc2626;
+      --success:#16a34a;
+      --bg:#f4f7fb;
+      --surface:#ffffff;
+      --surface-2:#eef4f5;
+      --text:#102a2a;
+      --muted:#64748b;
+      --border:#dbe4e8;
+      --shadow:0 12px 35px rgba(15,23,42,.08);
+      --radius:18px;
+      --sidebar:280px;
+    }
+
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{
+      font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.55;
+    }
+    button,input,select,textarea{font:inherit}
+    button{cursor:pointer}
+    a{text-decoration:none;color:inherit}
+
+    .app{
+      min-height:100vh;
+      display:grid;
+      grid-template-columns:var(--sidebar) 1fr;
+    }
+
+    /* SIDEBAR */
+    .sidebar{
+      position:fixed;
+      inset:0 auto 0 0;
+      width:var(--sidebar);
+      background:#082f2f;
+      color:#e8ffff;
+      padding:22px 16px;
+      overflow-y:auto;
+      z-index:1000;
+      transition:transform .3s ease;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:8px 10px 24px;
+      border-bottom:1px solid rgba(255,255,255,.1);
+      margin-bottom:16px;
+    }
+    .brand-logo{
+      width:48px;height:48px;border-radius:14px;
+      display:grid;place-items:center;
+      background:linear-gradient(135deg,#14b8a6,#2563eb);
+      font-size:22px;font-weight:800;
+      box-shadow:0 8px 25px rgba(20,184,166,.25);
+    }
+    .brand h1{font-size:16px;line-height:1.15}
+    .brand small{color:#9fc6c6;font-size:11px}
+
+    .nav-label{
+      color:#79a5a5;
+      font-size:10px;
+      font-weight:800;
+      letter-spacing:1.3px;
+      padding:14px 10px 7px;
+      text-transform:uppercase;
+    }
+    .nav-link{
+      width:100%;
+      display:flex;
+      align-items:center;
+      gap:12px;
+      border:0;
+      color:#cce7e7;
+      background:transparent;
+      padding:11px 12px;
+      border-radius:12px;
+      margin:2px 0;
+      text-align:left;
+      transition:.2s ease;
+    }
+    .nav-link:hover,.nav-link.active{
+      background:rgba(255,255,255,.1);
+      color:#fff;
+    }
+    .nav-icon{width:24px;text-align:center;font-size:17px}
+    .sidebar-footer{
+      margin-top:20px;
+      padding:14px;
+      border:1px solid rgba(255,255,255,.1);
+      border-radius:14px;
+      color:#a8caca;
+      font-size:11px;
+    }
+
+    /* MAIN */
+    .main{
+      grid-column:2;
+      min-width:0;
+    }
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:900;
+      height:72px;
+      background:rgba(255,255,255,.92);
+      backdrop-filter:blur(14px);
+      border-bottom:1px solid var(--border);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:18px;
+      padding:0 28px;
+    }
+    .top-left,.top-right{display:flex;align-items:center;gap:12px}
+    .menu-btn{
+      display:none;
+      border:0;background:var(--surface-2);
+      width:42px;height:42px;border-radius:12px;
+      font-size:20px;
+    }
+    .search{
+      width:min(480px,45vw);
+      position:relative;
+    }
+    .search input{
+      width:100%;
+      border:1px solid var(--border);
+      background:#f8fafc;
+      padding:11px 15px 11px 40px;
+      border-radius:12px;
+      outline:none;
+    }
+    .search input:focus{border-color:var(--primary)}
+    .search span{
+      position:absolute;left:13px;top:9px;color:var(--muted)
+    }
+    .icon-btn{
+      width:42px;height:42px;border:1px solid var(--border);
+      background:var(--surface);border-radius:12px;
+    }
+    .avatar{
+      width:42px;height:42px;border-radius:50%;
+      display:grid;place-items:center;
+      color:#fff;font-weight:800;
+      background:linear-gradient(135deg,var(--primary),var(--secondary));
+    }
+
+    .content{padding:28px;max-width:1700px;margin:auto}
+    .page{display:none;animation:fadeUp .35s ease}
+    .page.active{display:block}
+    @keyframes fadeUp{
+      from{opacity:0;transform:translateY(10px)}
+      to{opacity:1;transform:none}
+    }
+
+    .hero{
+      border-radius:24px;
+      padding:34px;
+      color:#fff;
+      background:
+        radial-gradient(circle at 85% 20%,rgba(255,255,255,.18),transparent 30%),
+        linear-gradient(135deg,#0f766e,#164e63 60%,#1d4ed8);
+      box-shadow:var(--shadow);
+      display:flex;
+      justify-content:space-between;
+      gap:30px;
+      align-items:center;
+      overflow:hidden;
+    }
+    .hero h2{font-size:clamp(26px,4vw,42px);line-height:1.1;margin-bottom:10px}
+    .hero p{max-width:720px;color:#d8ffff}
+    .hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+    .btn{
+      border:0;border-radius:11px;padding:11px 16px;
+      font-weight:700;transition:.2s ease;
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .btn-primary{background:var(--primary);color:#fff}
+    .btn-light{background:#fff;color:#134e4a}
+    .btn-outline{background:transparent;border:1px solid var(--border);color:var(--text)}
+
+    .section-title{
+      display:flex;align-items:end;justify-content:space-between;
+      gap:20px;margin:30px 0 14px;
+    }
+    .section-title h2{font-size:22px}
+    .section-title p{color:var(--muted);font-size:13px}
+
+    .stats{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:16px;
+      margin-top:20px;
+    }
+    .stat-card,.card{
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+    }
+    .stat-card{
+      padding:20px;
+      display:flex;
+      justify-content:space-between;
+      gap:15px;
+    }
+    .stat-card .icon{
+      width:46px;height:46px;border-radius:14px;
+      display:grid;place-items:center;background:var(--surface-2);
+      font-size:20px;
+    }
+    .stat-card h3{font-size:26px}
+    .stat-card p{font-size:12px;color:var(--muted)}
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:18px;
+    }
+    .card{padding:20px}
+    .module-card{
+      position:relative;
+      overflow:hidden;
+      min-height:190px;
+      transition:.25s ease;
+    }
+    .module-card:hover{transform:translateY(-4px)}
+    .module-top{display:flex;justify-content:space-between;align-items:flex-start}
+    .module-icon{
+      width:52px;height:52px;border-radius:15px;
+      display:grid;place-items:center;
+      background:#e6f5f3;font-size:23px;
+    }
+    .module-card h3{margin:17px 0 5px}
+    .module-card p{font-size:13px;color:var(--muted)}
+    .module-card .open{
+      display:inline-flex;margin-top:14px;color:var(--primary);
+      font-weight:800;font-size:12px;
+    }
+
+    .two-col{
+      display:grid;grid-template-columns:1.35fr .65fr;gap:18px;
+    }
+    .list{list-style:none}
+    .list li{
+      display:flex;align-items:center;justify-content:space-between;
+      gap:10px;padding:13px 0;border-bottom:1px solid var(--border);
+      font-size:13px;
+    }
+    .list li:last-child{border-bottom:0}
+    .badge{
+      display:inline-flex;align-items:center;
+      border-radius:999px;padding:4px 9px;
+      font-size:10px;font-weight:800;
+      background:#e8f5ef;color:#166534;
+    }
+    .badge.warning{background:#fff7df;color:#92400e}
+    .badge.danger{background:#feecec;color:#991b1b}
+    .badge.blue{background:#eaf2ff;color:#1d4ed8}
+
+    /* FORMS */
+    .form-grid{
+      display:grid;grid-template-columns:repeat(2,1fr);gap:14px;
+    }
+    .field{display:flex;flex-direction:column;gap:6px}
+    .field.full{grid-column:1/-1}
+    .field label{font-size:12px;font-weight:700}
+    .field input,.field select,.field textarea{
+      border:1px solid var(--border);
+      border-radius:10px;padding:11px 12px;
+      background:var(--surface);outline:none;
+    }
+    .field textarea{min-height:110px;resize:vertical}
+    .field input:focus,.field select:focus,.field textarea:focus{
+      border-color:var(--primary);
+      box-shadow:0 0 0 3px rgba(15,118,110,.1);
+    }
+
+    .table-wrap{overflow:auto}
+    table{width:100%;border-collapse:collapse;min-width:650px}
+    th,td{text-align:left;padding:12px;border-bottom:1px solid var(--border);font-size:12px}
+    th{background:#f8fafc;font-size:11px;color:#475569}
+
+    .module-header{
+      display:flex;justify-content:space-between;align-items:center;
+      gap:15px;margin-bottom:18px;flex-wrap:wrap;
+    }
+    .module-header h2{font-size:25px}
+    .module-header p{font-size:13px;color:var(--muted)}
+    .actions{display:flex;gap:8px;flex-wrap:wrap}
+
+    .tabs{display:flex;gap:6px;overflow:auto;margin-bottom:18px}
+    .tab{
+      white-space:nowrap;border:1px solid var(--border);
+      background:var(--surface);padding:9px 13px;border-radius:10px;
+      font-size:12px;font-weight:700;
+    }
+    .tab.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+
+    .empty{
+      padding:35px;text-align:center;color:var(--muted);
+      border:1px dashed var(--border);border-radius:14px;
+    }
+
+    .footer{
+      margin-top:35px;padding:25px 0 10px;
+      color:var(--muted);font-size:11px;
+      border-top:1px solid var(--border);
+      display:flex;justify-content:space-between;gap:15px;
+      flex-wrap:wrap;
+    }
+
+    /* MODAL / TOAST */
+    .modal-backdrop{
+      position:fixed;inset:0;background:rgba(2,6,23,.55);
+      display:none;align-items:center;justify-content:center;
+      padding:20px;z-index:2000;
+    }
+    .modal-backdrop.show{display:flex}
+    .modal{
+      width:min(620px,100%);
+      max-height:90vh;overflow:auto;
+      background:var(--surface);border-radius:20px;
+      padding:22px;box-shadow:0 25px 70px rgba(0,0,0,.25);
+    }
+    .modal-head{display:flex;justify-content:space-between;gap:15px;margin-bottom:18px}
+    .close{border:0;background:var(--surface-2);width:36px;height:36px;border-radius:9px}
+    .toast{
+      position:fixed;right:20px;bottom:20px;z-index:3000;
+      background:#082f2f;color:#fff;padding:13px 16px;border-radius:12px;
+      box-shadow:var(--shadow);display:none;font-size:12px;
+    }
+    .toast.show{display:block;animation:fadeUp .25s ease}
+
+    .overlay{
+      display:none;position:fixed;inset:0;background:rgba(2,6,23,.4);z-index:950
+    }
+    .overlay.show{display:block}
+
+    /* DARK MODE */
+    body.dark{
+      --bg:#071b1b;
+      --surface:#0d2828;
+      --surface-2:#123636;
+      --text:#e6f7f7;
+      --muted:#9bb7b7;
+      --border:#214646;
+    }
+    body.dark .topbar{background:rgba(13,40,40,.92)}
+    body.dark .search input,body.dark th{background:#102e2e}
+    body.dark th{color:#b9d0d0}
+
+    /* RESPONSIVE */
+    @media(max-width:1100px){
+      .stats{grid-template-columns:repeat(2,1fr)}
+      .grid{grid-template-columns:repeat(2,1fr)}
+      .two-col{grid-template-columns:1fr}
+    }
+    @media(max-width:820px){
+      :root{--sidebar:280px}
+      .app{display:block}
+      .sidebar{transform:translateX(-100%)}
+      .sidebar.open{transform:translateX(0)}
+      .main{width:100%}
+      .menu-btn{display:block}
+      .search{width:min(430px,50vw)}
+      .content{padding:18px}
+      .hero{padding:25px}
+      .grid{grid-template-columns:1fr}
+    }
+    @media(max-width:560px){
+      .topbar{padding:0 14px}
+      .search{display:none}
+      .stats{grid-template-columns:1fr}
+      .hero{padding:22px;display:block}
+      .form-grid{grid-template-columns:1fr}
+      .field.full{grid-column:auto}
+      .content{padding:14px}
+      .top-right .icon-btn{display:none}
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-logo">M</div>
+        <div>
+          <h1>MACOKI</h1>
+          <small>Integrated Digital Ecosystem</small>
+        </div>
+      </div>
+
+      <div class="nav-label">Main</div>
+      <button class="nav-link active" data-page="dashboard"><span class="nav-icon">🏠</span> Dashboard</button>
+
+      <div class="nav-label">Healthcare</div>
+      <button class="nav-link" data-page="health"><span class="nav-icon">🏥</span> Health & Clinic</button>
+      <button class="nav-link" data-page="women"><span class="nav-icon">👩‍⚕️</span> Women's Health</button>
+      <button class="nav-link" data-page="pharmacy"><span class="nav-icon">💊</span> Pharmacy & Inventory</button>
+      <button class="nav-link" data-page="laboratory"><span class="nav-icon">🧪</span> Laboratory</button>
+      <button class="nav-link" data-page="appointments"><span class="nav-icon">📅</span> Appointments</button>
+
+      <div class="nav-label">Education</div>
+      <button class="nav-link" data-page="education"><span class="nav-icon">🎓</span> Education</button>
+      <button class="nav-link" data-page="students"><span class="nav-icon">👨‍🎓</span> Student Portal</button>
+      <button class="nav-link" data-page="teachers"><span class="nav-icon">👨‍🏫</span> Teacher Portal</button>
+      <button class="nav-link" data-page="parents"><span class="nav-icon">👪</span> Parent Portal</button>
+      <button class="nav-link" data-page="library"><span class="nav-icon">📚</span> Digital Library</button>
+      <button class="nav-link" data-page="cbt"><span class="nav-icon">📝</span> CBT & Exams</button>
+
+      <div class="nav-label">Management</div>
+      <button class="nav-link" data-page="admin"><span class="nav-icon">⚙️</span> Administration</button>
+      <button class="nav-link" data-page="security"><span class="nav-icon">🔐</span> Security & Privacy</button>
+
+      <div class="sidebar-footer">
+        <strong>Frontend Build</strong><br>
+        This version uses browser storage for demonstration. A secure backend/database can be connected later.
+      </div>
+    </aside>
+
+    <div class="overlay" id="overlay"></div>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="top-left">
+          <button class="menu-btn" id="menuBtn">☰</button>
+          <div class="search">
+            <span>⌕</span>
+            <input id="globalSearch" type="search" placeholder="Search modules, patients, students...">
+          </div>
+        </div>
+        <div class="top-right">
+          <button class="icon-btn" id="themeBtn" title="Toggle dark mode">🌙</button>
+          <button class="icon-btn" id="notifyBtn" title="Notifications">🔔</button>
+          <div class="avatar">KM</div>
+        </div>
+      </header>
+
+      <section class="content">
+
+        <!-- DASHBOARD -->
+        <section class="page active" id="dashboard">
+          <div class="hero">
+            <div>
+              <h2>Welcome to MACOKI</h2>
+              <p>A unified digital platform connecting healthcare, education, pharmacy, laboratory, learning, examinations and administration.</p>
+              <div class="hero-actions">
+                <button class="btn btn-light" data-go="health">Open Health</button>
+                <button class="btn btn-light" data-go="education">Open Education</button>
+                <button class="btn btn-light" data-go="admin">Administration</button>
+              </div>
+            </div>
+            <div style="font-size:90px;opacity:.18">✚</div>
+          </div>
+
+          <div class="stats">
+            <div class="stat-card"><div><p>Registered Patients</p><h3 id="patientCount">0</h3></div><div class="icon">🏥</div></div>
+            <div class="stat-card"><div><p>Students</p><h3 id="studentCount">0</h3></div><div class="icon">🎓</div></div>
+            <div class="stat-card"><div><p>Inventory Items</p><h3 id="drugCount">0</h3></div><div class="icon">💊</div></div>
+            <div class="stat-card"><div><p>Appointments</p><h3 id="appointmentCount">0</h3></div><div class="icon">📅</div></div>
+          </div>
+
+          <div class="section-title">
+            <div><h2>Core Modules</h2><p>Access every major MACOKI service from one interface.</p></div>
+          </div>
+
+          <div class="grid" id="moduleGrid">
+            <div class="card module-card searchable" data-search="health clinic patient">
+              <div class="module-top"><div class="module-icon">🏥</div><span class="badge">Healthcare</span></div>
+              <h3>Health & Clinic</h3><p>Patient registration, records, providers, referrals and clinical services.</p>
+              <button class="open" data-go="health">Open module →</button>
+            </div>
+            <div class="card module-card searchable" data-search="women maternal antenatal">
+              <div class="module-top"><div class="module-icon">👩‍⚕️</div><span class="badge">Healthcare</span></div>
+              <h3>Women's Health</h3><p>Maternal, reproductive, antenatal and postnatal health services.</p>
+              <button class="open" data-go="women">Open module →</button>
+            </div>
+            <div class="card module-card searchable" data-search="pharmacy drugs inventory">
+              <div class="module-top"><div class="module-icon">💊</div><span class="badge warning">Inventory</span></div>
+              <h3>Pharmacy & Inventory</h3><p>Drug stock, batches, expiry, dispensing and inventory monitoring.</p>
+              <button class="open" data-go="pharmacy">Open module →</button>
+            </div>
+            <div class="card module-card searchable" data-search="laboratory test results">
+              <div class="module-top"><div class="module-icon">🧪</div><span class="badge blue">Diagnostics</span></div>
+              <h3>Laboratory</h3><p>Test requests, samples, results, verification and reporting.</p>
+              <button class="open" data-go="laboratory">Open module →</button>
+            </div>
+            <div class="card module-card searchable" data-search="education school nursery primary secondary">
+              <div class="module-top"><div class="module-icon">🎓</div><span class="badge">Education</span></div>
+              <h3>Education</h3><p>Nursery, primary and secondary school classes with learning resources.</p>
+              <button class="open" data-go="education">Open module →</button>
+            </div>
+            <div class="card module-card searchable" data-search="cbt examination test">
+              <div class="module-top"><div class="module-icon">📝</div><span class="badge blue">Assessment</span></div>
+              <h3>CBT & Examinations</h3><p>Digital tests, question banks, scoring and performance tracking.</p>
+              <button class="open" data-go="cbt">Open module →</button>
+            </div>
+          </div>
+
+          <div class="two-col" style="margin-top:18px">
+            <div class="card">
+              <div class="section-title" style="margin-top:0"><div><h2>Recent Activities</h2><p>Local demonstration activity feed.</p></div></div>
+              <ul class="list" id="activityList"></ul>
+            </div>
+            <div class="card">
+              <div class="section-title" style="margin-top:0"><div><h2>System Status</h2><p>Current frontend state.</p></div></div>
+              <ul class="list">
+                <li><span>Interface</span><span class="badge">Online</span></li>
+                <li><span>Local Storage</span><span class="badge">Enabled</span></li>
+                <li><span>Responsive UI</span><span class="badge">Ready</span></li>
+                <li><span>Backend</span><span class="badge warning">Not Connected</span></li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- HEALTH -->
+        <section class="page" id="health">
+          <div class="module-header"><div><h2>Health & Clinic</h2><p>Manage patients and core clinical services.</p></div><div class="actions"><button class="btn btn-primary" id="newPatientBtn">+ Register Patient</button></div></div>
+          <div class="grid">
+            <div class="card"><h3>Patient Registration</h3><p style="color:var(--muted);font-size:13px;margin:8px 0 15px">Create a local patient record.</p><button class="btn btn-primary" id="healthRegister">Register Patient</button></div>
+            <div class="card"><h3>Patient Portal</h3><p style="color:var(--muted);font-size:13px;margin:8px 0 15px">Profile, appointments and health records.</p><button class="btn btn-outline" onclick="toast('Patient portal interface ready for backend authentication.')">Open Portal</button></div>
+            <div class="card"><h3>Clinical Services</h3><p style="color:var(--muted);font-size:13px;margin:8px 0 15px">Doctors, nurses, CHW, PHP and referrals.</p><button class="btn btn-outline" onclick="toast('Clinical services module selected.')">View Services</button></div>
+          </div>
+          <div class="card" style="margin-top:18px">
+            <div class="section-title" style="margin-top:0"><div><h2>Registered Patients</h2><p>Local demonstration records.</p></div></div>
+            <div class="table-wrap"><table><thead><tr><th>Name</th><th>Age</th><th>Sex</th><th>Phone</th><th>Date</th></tr></thead><tbody id="patientTable"></tbody></table></div>
+          </div>
+        </section>
+
+        <!-- WOMEN -->
+        <section class="page" id="women">
+          <div class="module-header"><div><h2>Women's Health</h2><p>Integrated maternal and women's health services.</p></div></div>
+          <div class="grid">
+            <div class="card"><div class="module-icon">🤰</div><h3>Antenatal Care</h3><p>Appointments, routine follow-up and education.</p></div>
+            <div class="card"><div class="module-icon">🍼</div><h3>Postnatal Care</h3><p>Post-delivery follow-up and maternal support.</p></div>
+            <div class="card"><div class="module-icon">👶</div><h3>Child Health</h3><p>Child welfare, growth monitoring and health education.</p></div>
+            <div class="card"><div class="module-icon">📋</div><h3>Family Planning</h3><p>Evidence-based counselling and service records.</p></div>
+            <div class="card"><div class="module-icon">📚</div><h3>Health Education</h3><p>Women's health learning and educational resources.</p></div>
+            <div class="card"><div class="module-icon">📊</div><h3>Reports</h3><p>Service activity and monitoring reports.</p></div>
+          </div>
+        </section>
+
+        <!-- PHARMACY -->
+        <section class="page" id="pharmacy">
+          <div class="module-header"><div><h2>Pharmacy & Drug Inventory</h2><p>Track stock, batches, expiry dates and dispensing.</p></div><button class="btn btn-primary" id="newDrugBtn">+ Add Drug</button></div>
+          <div class="stats">
+            <div class="stat-card"><div><p>Total Items</p><h3 id="inventoryTotal">0</h3></div><div class="icon">💊</div></div>
+            <div class="stat-card"><div><p>Low Stock</p><h3 id="lowStock">0</h3></div><div class="icon">⚠️</div></div>
+            <div class="stat-card"><div><p>Expiring Soon</p><h3 id="expiringStock">0</h3></div><div class="icon">⏳</div></div>
+            <div class="stat-card"><div><p>Dosage Forms</p><h3>5+</h3></div><div class="icon">🧴</div></div>
+          </div>
+          <div class="card" style="margin-top:18px">
+            <div class="section-title" style="margin-top:0"><div><h2>Inventory Register</h2><p>Includes batch, manufacturing and expiry information.</p></div></div>
+            <div class="table-wrap"><table><thead><tr><th>Drug</th><th>Form</th><th>Batch</th><th>Quantity</th><th>Expiry</th><th>Status</th></tr></thead><tbody id="drugTable"></tbody></table></div>
+          </div>
+        </section>
+
+        <!-- LAB -->
+        <section class="page" id="laboratory">
+          <div class="module-header"><div><h2>Laboratory</h2><p>Diagnostics workflow and laboratory result management.</p></div><button class="btn btn-primary" onclick="toast('New laboratory request form can be connected here.')">+ New Test Request</button></div>
+          <div class="grid">
+            <div class="card"><h3>Test Requests</h3><h2 style="margin-top:8px">24</h2><p style="color:var(--muted)">Pending requests</p></div>
+            <div class="card"><h3>Samples</h3><h2 style="margin-top:8px">18</h2><p style="color:var(--muted)">Samples received</p></div>
+            <div class="card"><h3>Results</h3><h2 style="margin-top:8px">31</h2><p style="color:var(--muted)">Results processed</p></div>
+          </div>
+          <div class="card" style="margin-top:18px">
+            <h3>Laboratory Workflow</h3>
+            <div class="tabs" style="margin-top:15px">
+              <button class="tab active">Requested</button><button class="tab">Sample Received</button><button class="tab">Processing</button><button class="tab">Verified</button><button class="tab">Released</button>
+            </div>
+            <div class="empty">Laboratory records will appear here when connected to the backend database.</div>
+          </div>
+        </section>
+
+        <!-- APPOINTMENTS -->
+        <section class="page" id="appointments">
+          <div class="module-header"><div><h2>Appointments</h2><p>Manage clinical and service appointments.</p></div><button class="btn btn-primary" id="newAppointmentBtn">+ Book Appointment</button></div>
+          <div class="card">
+            <div class="table-wrap"><table><thead><tr><th>Patient</th><th>Provider</th><th>Service</th><th>Date</th><th>Time</th><th>Status</th></tr></thead><tbody id="appointmentTable"></tbody></table></div>
+          </div>
+        </section>
+
+        <!-- EDUCATION -->
+        <section class="page" id="education">
+          <div class="module-header"><div><h2>Education</h2><p>Nursery, primary and secondary education structure.</p></div></div>
+          <div class="tabs">
+            <button class="tab active" data-class-tab="nursery">Nursery</button>
+            <button class="tab" data-class-tab="primary">Primary</button>
+            <button class="tab" data-class-tab="jss">JSS</button>
+            <button class="tab" data-class-tab="ss">SS</button>
+          </div>
+          <div id="classContent"></div>
+        </section>
+
+        <!-- STUDENTS -->
+        <section class="page" id="students">
+          <div class="module-header"><div><h2>Student Portal</h2><p>Student profile, learning, assignments, CBT and results.</p></div><button class="btn btn-primary" onclick="openModal('studentModal')">+ Register Student</button></div>
+          <div class="grid">
+            <div class="card"><h3>My Classes</h3><p>Access assigned class subjects and learning materials.</p></div>
+            <div class="card"><h3>Assignments</h3><p>View, submit and track assignments.</p></div>
+            <div class="card"><h3>Performance</h3><p>Monitor scores and academic progress.</p></div>
+          </div>
+          <div class="card" style="margin-top:18px">
+            <h3>Student Records</h3>
+            <div class="table-wrap"><table><thead><tr><th>Name</th><th>Class</th><th>Student ID</th><th>Status</th></tr></thead><tbody id="studentTable"></tbody></table></div>
+          </div>
+        </section>
+
+        <!-- TEACHERS -->
+        <section class="page" id="teachers">
+          <div class="module-header"><div><h2>Teacher / Staff Portal</h2><p>Teaching, assessment and student management tools.</p></div></div>
+          <div class="grid">
+            <div class="card"><h3>My Classes</h3><p>View assigned classes and subjects.</p></div>
+            <div class="card"><h3>CBT Questions</h3><p>Create and manage assessment questions.</p></div>
+            <div class="card"><h3>Results</h3><p>Enter and review student results.</p></div>
+            <div class="card"><h3>Attendance</h3><p>Record student attendance.</p></div>
+          </div>
+        </section>
+
+        <!-- PARENTS -->
+        <section class="page" id="parents">
+          <div class="module-header"><div><h2>Parent / Guardian Portal</h2><p>Monitor linked students and school activities.</p></div></div>
+          <div class="grid">
+            <div class="card"><h3>Linked Students</h3><p>View children connected to your account.</p></div>
+            <div class="card"><h3>Academic Results</h3><p>View results and performance.</p></div>
+            <div class="card"><h3>Attendance</h3><p>Monitor school attendance.</p></div>
+            <div class="card"><h3>Announcements</h3><p>Receive school communications.</p></div>
+          </div>
+        </section>
+
+        <!-- LIBRARY -->
+        <section class="page" id="library">
+          <div class="module-header"><div><h2>Digital Library & Learning</h2><p>Organize educational and health learning resources.</p></div><button class="btn btn-primary" onclick="toast('Resource upload interface ready for backend integration.')">+ Add Resource</button></div>
+          <div class="grid">
+            <div class="card"><div class="module-icon">📖</div><h3>Textbooks</h3><p>Organized school textbooks and references.</p></div>
+            <div class="card"><div class="module-icon">📑</div><h3>Study Notes</h3><p>Class-specific notes and revision materials.</p></div>
+            <div class="card"><div class="module-icon">🩺</div><h3>Health Resources</h3><p>Health and public-health educational materials.</p></div>
+            <div class="card"><div class="module-icon">🔎</div><h3>Search Library</h3><p>Find resources by title, class or category.</p></div>
+          </div>
+        </section>
+
+        <!-- CBT -->
+        <section class="page" id="cbt">
+          <div class="module-header"><div><h2>CBT & Examination System</h2><p>Digital assessment framework for school classes.</p></div><button class="btn btn-primary" onclick="startDemoCBT()">Start Demo CBT</button></div>
+          <div class="grid">
+            <div class="card"><h3>Question Bank</h3><h2>100+</h2><p>Designed to support large subject-specific question banks.</p></div>
+            <div class="card"><h3>Automatic Scoring</h3><p>Instant score calculation for objective assessments.</p></div>
+            <div class="card"><h3>Attempt History</h3><p>Track attempts and best scores.</p></div>
+          </div>
+          <div class="card" style="margin-top:18px">
+            <h3>CBT Configuration</h3>
+            <div class="form-grid" style="margin-top:15px">
+              <div class="field"><label>Class</label><select><option>JSS1</option><option>JSS2</option><option>JSS3</option><option>SS1</option><option>SS2</option><option>SS3</option></select></div>
+              <div class="field"><label>Subject</label><select><option>Mathematics</option><option>English Studies</option><option>Basic Science</option><option>Biology</option><option>Chemistry</option><option>Physics</option></select></div>
+              <div class="field"><label>Questions</label><select><option>20</option><option>40</option><option>50</option><option>100</option></select></div>
+              <div class="field"><label>Duration</label><select><option>20 minutes</option><option>30 minutes</option><option>60 minutes</option><option>90 minutes</option></select></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ADMIN -->
+        <section class="page" id="admin">
+          <div class="module-header"><div><h2>Administration</h2><p>Central management, users, permissions and reports.</p></div></div>
+          <div class="grid">
+            <div class="card"><h3>User Management</h3><p>Manage students, patients, teachers and staff.</p><button class="btn btn-outline" style="margin-top:12px" onclick="toast('User management selected.')">Manage Users</button></div>
+            <div class="card"><h3>Roles & Permissions</h3><p>Define role-based access to modules.</p><button class="btn btn-outline" style="margin-top:12px" onclick="toast('Role and permission controls selected.')">Manage Access</button></div>
+            <div class="card"><h3>Reports</h3><p>Generate operational and performance reports.</p><button class="btn btn-outline" style="margin-top:12px" onclick="toast('Reporting centre selected.')">Open Reports</button></div>
+            <div class="card"><h3>System Settings</h3><p>Configure ecosystem-wide preferences.</p><button class="btn btn-outline" style="margin-top:12px" onclick="toast('System settings selected.')">Settings</button></div>
+          </div>
+        </section>
+
+        <!-- SECURITY -->
+        <section class="page" id="security">
+          <div class="module-header"><div><h2>Security & Privacy</h2><p>Frontend security controls and privacy architecture.</p></div></div>
+          <div class="grid">
+            <div class="card"><h3>Authentication</h3><p>Login and account authentication framework.</p><span class="badge warning" style="margin-top:12px">Backend Required</span></div>
+            <div class="card"><h3>Role-Based Access</h3><p>Restrict features according to user roles.</p><span class="badge warning" style="margin-top:12px">Backend Required</span></div>
+            <div class="card"><h3>Audit Trail</h3><p>Record sensitive administrative activities.</p><span class="badge warning" style="margin-top:12px">Backend Required</span></div>
+            <div class="card"><h3>Privacy</h3><p>Privacy controls and data protection policies.</p><span class="badge">Architecture Ready</span></div>
+          </div>
+        </section>
+
+        <footer class="footer">
+          <span>© 2026 MACOKI Integrated Digital Ecosystem</span>
+          <span>Frontend prototype • Backend/database integration pending</span>
+        </footer>
+      </section>
+    </main>
+  </div>
+
+  <!-- PATIENT MODAL -->
+  <div class="modal-backdrop" id="patientModal">
+    <div class="modal">
+      <div class="modal-head"><div><h2>Register Patient</h2><p style="color:var(--muted);font-size:12px">Create a local demonstration record.</p></div><button class="close" onclick="closeModal('patientModal')">✕</button></div>
+      <form id="patientForm" class="form-grid">
+        <div class="field"><label>Full Name *</label><input name="name" required></div>
+        <div class="field"><label>Age *</label><input name="age" type="number" min="0" required></div>
+        <div class="field"><label>Sex *</label><select name="sex" required><option value="">Select</option><option>Male</option><option>Female</option></select></div>
+        <div class="field"><label>Phone</label><input name="phone"></div>
+        <div class="field full"><label>Address</label><textarea name="address"></textarea></div>
+        <div class="field full"><button class="btn btn-primary" type="submit">Save Patient</button></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- DRUG MODAL -->
+  <div class="modal-backdrop" id="drugModal">
+    <div class="modal">
+      <div class="modal-head"><div><h2>Add Drug</h2><p style="color:var(--muted);font-size:12px">Create an inventory demonstration record.</p></div><button class="close" onclick="closeModal('drugModal')">✕</button></div>
+      <form id="drugForm" class="form-grid">
+        <div class="field"><label>Drug Name *</label><input name="drug" required></div>
+        <div class="field"><label>Dosage Form *</label><select name="form" required><option>Tablet</option><option>Capsule</option><option>Syrup</option><option>Injection</option><option>Other</option></select></div>
+        <div class="field"><label>Batch Number *</label><input name="batch" required></div>
+        <div class="field"><label>Quantity *</label><input name="quantity" type="number" min="0" required></div>
+        <div class="field"><label>Manufacturing Date</label><input name="manufactured" type="date"></div>
+        <div class="field"><label>Expiry Date *</label><input name="expiry" type="date" required></div>
+        <div class="field full"><button class="btn btn-primary" type="submit">Save Drug</button></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- STUDENT MODAL -->
+  <div class="modal-backdrop" id="studentModal">
+    <div class="modal">
+      <div class="modal-head"><div><h2>Register Student</h2><p style="color:var(--muted);font-size:12px">Create a local student record.</p></div><button class="close" onclick="closeModal('studentModal')">✕</button></div>
+      <form id="studentForm" class="form-grid">
+        <div class="field"><label>Student Name *</label><input name="name" required></div>
+        <div class="field"><label>Class *</label><select name="class" required><option>Nursery 1</option><option>Nursery 2</option><option>Nursery 3</option><option>Primary 1</option><option>Primary 2</option><option>Primary 3</option><option>Primary 4</option><option>Primary 5</option><option>Primary 6</option><option>JSS1</option><option>JSS2</option><option>JSS3</option><option>SS1</option><option>SS2</option><option>SS3</option></select></div>
+        <div class="field full"><button class="btn btn-primary" type="submit">Save Student</button></div>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const KEY = {
+      patients: "macoki_patients",
+      drugs: "macoki_drugs",
+      students: "macoki_students",
+      appointments: "macoki_appointments",
+      activities: "macoki_activities",
+      theme: "macoki_theme"
+    };
+
+    const $ = (s, root=document) => root.querySelector(s);
+    const $$ = (s, root=document) => [...root.querySelectorAll(s)];
+
+    function getData(key){
+      try { return JSON.parse(localStorage.getItem(key) || "[]"); }
+      catch(e){ return []; }
+    }
+    function saveData(key, data){ localStorage.setItem(key, JSON.stringify(data)); }
+
+    function toast(message){
+      const el = $("#toast");
+      el.textContent = message;
+      el.classList.add("show");
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(()=>el.classList.remove("show"), 2800);
+    }
+
+    function addActivity(text){
+      const items = getData(KEY.activities);
+      items.unshift({text, time:new Date().toLocaleString()});
+      saveData(KEY.activities, items.slice(0,8));
+      renderActivities();
+    }
+
+    function renderActivities(){
+      const list = $("#activityList");
+      const items = getData(KEY.activities);
+      list.innerHTML = items.length ? items.map(x =>
+        `<li><span>${escapeHtml(x.text)}</span><small style="color:var(--muted)">${escapeHtml(x.time)}</small></li>`
+      ).join("") : `<li><span>No activity yet.</span><span class="badge">Ready</span></li>`;
+    }
+
+    function escapeHtml(value){
+      return String(value ?? "").replace(/[&<>"']/g, c => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+      }[c]));
+    }
+
+    function openModal(id){ $("#"+id).classList.add("show"); }
+    function closeModal(id){ $("#"+id).classList.remove("show"); }
+
+    function navigate(page){
+      $$(".page").forEach(p => p.classList.toggle("active", p.id === page));
+      $$(".nav-link").forEach(n => n.classList.toggle("active", n.dataset.page === page));
+      window.scrollTo({top:0,behavior:"smooth"});
+      $("#sidebar").classList.remove("open");
+      $("#overlay").classList.remove("show");
+    }
+
+    $$(".nav-link").forEach(btn => btn.addEventListener("click", ()=>navigate(btn.dataset.page)));
+    $$("[data-go]").forEach(btn => btn.addEventListener("click", ()=>navigate(btn.dataset.go)));
+
+    $("#menuBtn").addEventListener("click", ()=>{
+      $("#sidebar").classList.toggle("open");
+      $("#overlay").classList.toggle("show");
+    });
+    $("#overlay").addEventListener("click", ()=>{
+      $("#sidebar").classList.remove("open");
+      $("#overlay").classList.remove("show");
+    });
+
+    $("#themeBtn").addEventListener("click", ()=>{
+      document.body.classList.toggle("dark");
+      const mode = document.body.classList.contains("dark") ? "dark" : "light";
+      localStorage.setItem(KEY.theme, mode);
+      $("#themeBtn").textContent = mode === "dark" ? "☀️" : "🌙";
+    });
+
+    if(localStorage.getItem(KEY.theme) === "dark"){
+      document.body.classList.add("dark");
+      $("#themeBtn").textContent = "☀️";
+    }
+
+    $("#notifyBtn").addEventListener("click", ()=>{
+      toast("No new system notifications.");
+    });
+
+    function renderPatients(){
+      const rows = getData(KEY.patients);
+      $("#patientTable").innerHTML = rows.length ? rows.map(p =>
+        `<tr><td>${escapeHtml(p.name)}</td><td>${escapeHtml(p.age)}</td><td>${escapeHtml(p.sex)}</td><td>${escapeHtml(p.phone || "—")}</td><td>${escapeHtml(p.date)}</td></tr>`
+      ).join("") : `<tr><td colspan="5"><div class="empty">No patients registered yet.</div></td></tr>`;
+      $("#patientCount").textContent = rows.length;
+    }
+
+    function renderStudents(){
+      const rows = getData(KEY.students);
+      $("#studentTable").innerHTML = rows.length ? rows.map(s =>
+        `<tr><td>${escapeHtml(s.name)}</td><td>${escapeHtml(s.className)}</td><td>${escapeHtml(s.id)}</td><td><span class="badge">Active</span></td></tr>`
+      ).join("") : `<tr><td colspan="4"><div class="empty">No students registered yet.</div></td></tr>`;
+      $("#studentCount").textContent = rows.length;
+    }
+
+    function renderDrugs(){
+      const rows = getData(KEY.drugs);
+      const now = new Date();
+      const soon = new Date(); soon.setDate(soon.getDate()+90);
+      let low=0, expiring=0;
+
+      $("#drugTable").innerHTML = rows.length ? rows.map(d=>{
+        const qty = Number(d.quantity)||0;
+        const exp = new Date(d.expiry);
+        const isLow = qty < 10;
+        const isExpiring = exp <= soon;
+        if(isLow) low++;
+        if(isExpiring) expiring++;
+        const status = exp < now ? `<span class="badge danger">Expired</span>` :
+          isExpiring ? `<span class="badge warning">Expiring</span>` :
+          isLow ? `<span class="badge warning">Low Stock</span>` :
+          `<span class="badge">Available</span>`;
+        return `<tr><td>${escapeHtml(d.drug)}</td><td>${escapeHtml(d.form)}</td><td>${escapeHtml(d.batch)}</td><td>${qty}</td><td>${escapeHtml(d.expiry)}</td><td>${status}</td></tr>`;
+      }).join("") : `<tr><td colspan="6"><div class="empty">No inventory records yet.</div></td></tr>`;
+
+      $("#drugCount").textContent = rows.length;
+      $("#inventoryTotal").textContent = rows.length;
+      $("#lowStock").textContent = low;
+      $("#expiringStock").textContent = expiring;
+    }
+
+    function renderAppointments(){
+      const rows = getData(KEY.appointments);
+      $("#appointmentTable").innerHTML = rows.length ? rows.map(a =>
+        `<tr><td>${escapeHtml(a.patient)}</td><td>${escapeHtml(a.provider)}</td><td>${escapeHtml(a.service)}</td><td>${escapeHtml(a.date)}</td><td>${escapeHtml(a.time)}</td><td><span class="badge">${escapeHtml(a.status)}</span></td></tr>`
+      ).join("") : `<tr><td colspan="6"><div class="empty">No appointments booked yet.</div></td></tr>`;
+      $("#appointmentCount").textContent = rows.length;
+    }
+
+    $("#newPatientBtn").addEventListener("click", ()=>openModal("patientModal"));
+    $("#healthRegister").addEventListener("click", ()=>openModal("patientModal"));
+
+    $("#patientForm").addEventListener("submit", e=>{
+      e.preventDefault();
+      const f = new FormData(e.target);
+      const patients = getData(KEY.patients);
+      patients.push({
+        name:f.get("name"), age:f.get("age"), sex:f.get("sex"),
+        phone:f.get("phone"), address:f.get("address"),
+        date:new Date().toLocaleDateString()
+      });
+      saveData(KEY.patients, patients);
+      renderPatients(); addActivity("New patient registered");
+      e.target.reset(); closeModal("patientModal"); toast("Patient registered successfully.");
+    });
+
+    $("#newDrugBtn").addEventListener("click", ()=>openModal("drugModal"));
+    $("#drugForm").addEventListener("submit", e=>{
+      e.preventDefault();
+      const f = new FormData(e.target);
+      const drugs = getData(KEY.drugs);
+      drugs.push({
+        drug:f.get("drug"), form:f.get("form"), batch:f.get("batch"),
+        quantity:f.get("quantity"), manufactured:f.get("manufactured"),
+        expiry:f.get("expiry")
+      });
+      saveData(KEY.drugs, drugs);
+      renderDrugs(); addActivity("New pharmacy inventory item added");
+      e.target.reset(); closeModal("drugModal"); toast("Drug added to inventory.");
+    });
+
+    $("#studentForm").addEventListener("submit", e=>{
+      e.preventDefault();
+      const f = new FormData(e.target);
+      const students = getData(KEY.students);
+      const id = "MAC-" + String(Date.now()).slice(-6);
+      students.push({name:f.get("name"), className:f.get("class"), id});
+      saveData(KEY.students, students);
+      renderStudents(); addActivity("New student registered");
+      e.target.reset(); closeModal("studentModal"); toast("Student registered successfully.");
+    });
+
+    $("#newAppointmentBtn").addEventListener("click", ()=>{
+      const patient = prompt("Patient name:");
+      if(!patient) return;
+      const provider = prompt("Provider name:", "Clinic Provider");
+      const service = prompt("Service:", "General Consultation");
+      const date = prompt("Date (YYYY-MM-DD):");
+      const time = prompt("Time:", "10:00");
+      if(!date || !time) return toast("Appointment cancelled.");
+      const appointments = getData(KEY.appointments);
+      appointments.push({patient,provider:provider||"Clinic Provider",service:service||"Consultation",date,time,status:"Booked"});
+      saveData(KEY.appointments, appointments);
+      renderAppointments(); addActivity("New appointment booked"); toast("Appointment booked.");
+    });
+
+    /* EDUCATION STRUCTURE */
+    const curriculum = {
+      nursery:{
+        "Nursery 1":["Language & Communication","Numeracy","Basic Science","Social Habits","Creative Arts","Physical Development","Rhymes & Songs"],
+        "Nursery 2":["Language & Communication","Numeracy","Basic Science","Social Habits","Creative Arts","Physical Development","Rhymes & Songs"],
+        "Nursery 3":["Language & Communication","Numeracy","Basic Science","Social Habits","Creative Arts","Physical Development","Computer Awareness"]
+      },
+      primary:{
+        "Primary 1":["English Studies","Mathematics","Basic Science","Social Studies","Civic Education","Cultural & Creative Arts","Physical & Health Education","Computer Studies","Christian Religious Studies / Islamic Studies"],
+        "Primary 2":["English Studies","Mathematics","Basic Science","Social Studies","Civic Education","Cultural & Creative Arts","Physical & Health Education","Computer Studies","Christian Religious Studies / Islamic Studies"],
+        "Primary 3":["English Studies","Mathematics","Basic Science","Social Studies","Civic Education","Cultural & Creative Arts","Physical & Health Education","Computer Studies","Christian Religious Studies / Islamic Studies"],
+        "Primary 4":["English Studies","Mathematics","Basic Science","Social Studies","Civic Education","Cultural & Creative Arts","Physical & Health Education","Computer Studies","Agricultural Science","Christian Religious Studies / Islamic Studies"],
+        "Primary 5":["English Studies","Mathematics","Basic Science","Social Studies","Civic Education","Cultural & Creative Arts","Physical & Health Education","Computer Studies","Agricultural Science","Christian Religious Studies / Islamic Studies"],
+        "Primary 6":["English Studies","Mathematics","Basic Science","Social Studies","Civic Education","Cultural & Creative Arts","Physical & Health Education","Computer Studies","Agricultural Science","Christian Religious Studies / Islamic Studies"]
+      },
+      jss:{
+        "JSS1":["English Studies","Mathematics","Basic Science","Basic Technology","Computer Studies","Business Studies","Civic Education","Social Studies","Cultural & Creative Arts","Agricultural Science","Christian Religious Studies / Islamic Studies","French"],
+        "JSS2":["English Studies","Mathematics","Basic Science","Basic Technology","Computer Studies","Business Studies","Civic Education","Social Studies","Cultural & Creative Arts","Agricultural Science","Christian Religious Studies / Islamic Studies","French"],
+        "JSS3":["English Studies","Mathematics","Basic Science","Basic Technology","Computer Studies","Business Studies","Civic Education","Social Studies","Cultural & Creative Arts","Agricultural Science","Christian Religious Studies / Islamic Studies","French"]
+      },
+      ss:{
+        "SS1":["English Language","Mathematics","Civic Education","Biology","Chemistry","Physics","Economics","Government","Literature-in-English","Agricultural Science","Computer Studies","Financial Accounting","Commerce","Geography"],
+        "SS2":["English Language","Mathematics","Civic Education","Biology","Chemistry","Physics","Economics","Government","Literature-in-English","Agricultural Science","Computer Studies","Financial Accounting","Commerce","Geography"],
+        "SS3":["English Language","Mathematics","Civic Education","Biology","Chemistry","Physics","Economics","Government","Literature-in-English","Agricultural Science","Computer Studies","Financial Accounting","Commerce","Geography"]
+      }
+    };
+
+    function renderClasses(group="nursery"){
+      const data = curriculum[group];
+      $("#classContent").innerHTML = `<div class="grid">${Object.entries(data).map(([cls,subjects])=>`
+        <div class="card module-card">
+          <div class="module-top"><div class="module-icon">📘</div><span class="badge">${escapeHtml(group.toUpperCase())}</span></div>
+          <h3>${escapeHtml(cls)}</h3>
+          <p>${subjects.length} subjects / learning areas</p>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:12px">
+            ${subjects.map(s=>`<span class="badge blue">${escapeHtml(s)}</span>`).join("")}
+          </div>
+          <button class="open" onclick="toast('${escapeHtml(cls)} selected.')">Open class →</button>
+        </div>
+      `).join("")}</div>`;
+    }
+
+    $$("[data-class-tab]").forEach(tab=>{
+      tab.addEventListener("click",()=>{
+        $$("[data-class-tab]").forEach(t=>t.classList.remove("active"));
+        tab.classList.add("active");
+        renderClasses(tab.dataset.classTab);
+      });
+    });
+
+    function startDemoCBT(){
+      const answer = confirm("Start a 5-question demonstration CBT?");
+      if(!answer) return;
+      const questions = [
+        "Which process do green plants use to make food?",
+        "What is 12 × 5?",
+        "Which organ pumps blood around the body?",
+        "What is the opposite of 'increase'?",
+        "Which gas is essential for human respiration?"
+      ];
+      let score=0;
+      questions.forEach((q,i)=>{
+        const a = prompt(`Question ${i+1}/5\n\n${q}\n\nEnter your answer:`);
+        if(a && a.trim()) score++;
+      });
+      toast(`Demo CBT completed. Score: ${score}/5`);
+      addActivity(`Demo CBT completed with score ${score}/5`);
+    }
+
+    $("#globalSearch").addEventListener("input", e=>{
+      const term=e.target.value.toLowerCase().trim();
+      if($("#dashboard").classList.contains("active")){
+        $$(".searchable").forEach(card=>{
+          card.style.display = !term || card.dataset.search.includes(term) ? "" : "none";
+        });
+      }else if(term){
+        const match = $$(".nav-link").find(n=>n.textContent.toLowerCase().includes(term));
+        if(match) navigate(match.dataset.page);
+      }
+    });
+
+    /* Close modal when clicking backdrop */
+    $$(".modal-backdrop").forEach(backdrop=>{
+      backdrop.addEventListener("click", e=>{
+        if(e.target===backdrop) backdrop.classList.remove("show");
+      });
+    });
+
+    /* Initial render */
+    renderPatients();
+    renderStudents();
+    renderDrugs();
+    renderAppointments();
+    renderActivities();
+    renderClasses("nursery");
+
+    if(!getData(KEY.activities).length){
+      addActivity("MACOKI ecosystem initialized");
+    }
+  </script>
+</body>
+</html>
